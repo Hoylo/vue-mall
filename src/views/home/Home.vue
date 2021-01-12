@@ -1,10 +1,12 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <home-swiper :banners="banners" />
-    <recommend-view :recommends="recommends" />
-    <tab-control  class="tab-control" :tabs="tabs" @tabClick="tabClick"/>
-    <goods-list :goods="showGoods"/>
+    <scroll class="scroll-content">
+      <home-swiper :banners="banners" />
+      <recommend-view :recommends="recommends" />
+      <tab-control  class="tab-control" :tabs="tabs" @tabClick="tabClick"/>
+      <goods-list :goods="showGoods"/>
+    </scroll>
   </div>
 </template>
 
@@ -14,6 +16,7 @@ import HomeSwiper from "@/views/home/childComps/HomeSwiper"
 import RecommendView from "@/views/home/childComps/RecommendView"
 import TabControl from "@/components/common/tabControl/TabControl"
 import GoodsList from "@/components/content/goods/GoodsList";
+import Scroll from "@/components/common/scroll/Scroll";
 
 import {
   getHomeData,
@@ -100,7 +103,8 @@ export default {
     HomeSwiper,
     RecommendView,
     TabControl,
-    GoodsList
+    GoodsList,
+    Scroll
   }
 }
 </script>
@@ -108,11 +112,12 @@ export default {
 <style scoped>
 #home {
   padding-top: 44px;
+  height: 100vh;
+  position: relative;
 }
 .home-nav {
-  background: var(--color-tint);
+  background-color: var(--color-tint);
   color: #f6f6f6;
-
   position: fixed;
   right: 0;
   left: 0;
@@ -123,5 +128,14 @@ export default {
   position: sticky;
   top: 44px;
   z-index: 9;
+}
+
+.scroll-content {
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
 }
 </style>
