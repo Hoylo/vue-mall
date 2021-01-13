@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-cloak>
     <router-view/>
     <main-tab-bar/>
   </div>
@@ -17,5 +17,8 @@ export default {
 </script>
 
 <style>
+[v-cloak] {
+  display: none;
+}
 @import "assets/css/base.css";
 </style>

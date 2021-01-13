@@ -1,5 +1,5 @@
 <template>
-<div class="wrapper" ref="wrapper">
+<div class="wrapper" >
 <ul class="content">
   <li>分类</li>
 </ul>
@@ -7,32 +7,9 @@
 </template>
 
 <script>
-import BScroll from "better-scroll"
 
 export default {
-  name: "Category",
-  data() {
-    return {
-      scroll: null
-    }
-  },
-  created() {
-    this.$nextTick(() => {
-      this.scroll = new BScroll(this.$refs.wrapper, {
-        probeType: 3,
-        click: true,
-        pullUpLoad: true
-      })
-
-      this.scroll.on('scroll', (position) => {
-        console.log(position)
-      })
-
-      this.scroll.on('pullingUp', () => {
-
-      })
-    })
-  }
+  name: "Category"
 }
 </script>
 

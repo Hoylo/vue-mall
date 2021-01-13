@@ -1,12 +1,20 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <scroll class="scroll-content">
-      <home-swiper :banners="banners" />
+    <scroll class="scroll-content" ref="scroll"
+            :probe-type="3"
+            :pull-up-load="true"
+            @scroll="scrollPosition"
+            @pullUpload="pullUpload">
+      <home-swiper :banners="banners"/>
       <recommend-view :recommends="recommends" />
-      <tab-control  class="tab-control" :tabs="tabs" @tabClick="tabClick"/>
+      <tab-control  class="tab-control"  ref="tabControl"
+                    :tabs="tabs"
+                    :class="{fixed: isTabFixed}"
+                    @tabClick="tabClick" />
       <goods-list :goods="showGoods"/>
     </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop"/>
   </div>
 </template>
 
@@ -15,8 +23,11 @@ import NavBar from "@/components/common/navbar/NavBar"
 import HomeSwiper from "@/views/home/childComps/HomeSwiper"
 import RecommendView from "@/views/home/childComps/RecommendView"
 import TabControl from "@/components/common/tabControl/TabControl"
-import GoodsList from "@/components/content/goods/GoodsList";
-import Scroll from "@/components/common/scroll/Scroll";
+import GoodsList from "@/components/content/goods/GoodsList"
+import Scroll from "@/components/common/scroll/Scroll"
+import BackTop from "@/components/content/BackTop/BackTop";
+
+import {debounce} from "@/components/common/utils";
 
 import {
   getHomeData,
@@ -35,6 +46,9 @@ export default {
         sell: {page: 0, list: []}
       },
       currentType: 'pop',
+      isShowBackTop: false,
+      tabOffsetTop: 0,
+      isTabFixed: false,
       tabs: [
         {
           id: 1,
@@ -57,6 +71,15 @@ export default {
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
   },
+  mounted() {
+    this.$nextTick(() => {
+      // 图片加载完成监听
+      const refresh = debounce(this.$refs.scroll.refresh)
+      this.$bus.$on('itemImageLoad', () => {
+        this.$refs.scroll && this.$refs.scroll.scroll && refresh()
+      })
+    })
+  },
   methods: {
     /**
      * 事件监听相关方法
@@ -73,9 +96,19 @@ export default {
           this.currentType = 'sell'
           break
       }
-      console.log(index)
     },
-
+    backClick() {
+      this.$refs.scroll.scroll.scrollTo(0, 0, 300)
+    },
+    scrollPosition(position) {
+      //backtop是否显示
+      this.isShowBackTop = -position.y > 1000
+      //
+      this.isTabFixed = -position.y > this.$refs.tabControl.$el.offsetTop
+    },
+    pullUpload() {
+      this.getHomeGoods(this.currentType)
+    },
     /**
      * 网络请求相关方法
      */
@@ -90,6 +123,7 @@ export default {
       getHomeGoods(type, page).then (res => {
         this.homeGoods[type].list.push(...res.data.list)
         this.homeGoods[type].list.page += 1
+        this.$refs.scroll.finishPullUp()
       })
     }
   },
@@ -104,7 +138,8 @@ export default {
     RecommendView,
     TabControl,
     GoodsList,
-    Scroll
+    Scroll,
+    BackTop
   }
 }
 </script>
@@ -137,5 +172,12 @@ export default {
   bottom: 49px;
   left: 0;
   right: 0;
+}
+.fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 44px;
+  z-index: 9;
 }
 </style>
