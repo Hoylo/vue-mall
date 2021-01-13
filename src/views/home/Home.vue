@@ -1,6 +1,7 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <tab-control class="tab-control" ref="tabControl1" :tabs="tabs" @tabClick="tabClick" v-show="isTabFixed"/>
     <scroll class="scroll-content" ref="scroll"
             :probe-type="3"
             :pull-up-load="true"
@@ -8,10 +9,7 @@
             @pullUpload="pullUpload">
       <home-swiper :banners="banners"/>
       <recommend-view :recommends="recommends" />
-      <tab-control  class="tab-control"  ref="tabControl"
-                    :tabs="tabs"
-                    :class="{fixed: isTabFixed}"
-                    @tabClick="tabClick" />
+      <tab-control class="tab-control" ref="tabControl2" :tabs="tabs" @tabClick="tabClick" />
       <goods-list :goods="showGoods"/>
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop"/>
@@ -96,6 +94,8 @@ export default {
           this.currentType = 'sell'
           break
       }
+      this.$refs.tabControl1.currentIndex = index
+      this.$refs.tabControl2.currentIndex = index
     },
     backClick() {
       this.$refs.scroll.scroll.scrollTo(0, 0, 300)
@@ -103,8 +103,8 @@ export default {
     scrollPosition(position) {
       //backtop是否显示
       this.isShowBackTop = -position.y > 1000
-      //
-      this.isTabFixed = -position.y > this.$refs.tabControl.$el.offsetTop
+      //tab-control吸顶效果
+      this.isTabFixed = -position.y > this.$refs.tabControl2.$el.offsetTop
     },
     pullUpload() {
       this.getHomeGoods(this.currentType)
@@ -172,12 +172,5 @@ export default {
   bottom: 49px;
   left: 0;
   right: 0;
-}
-.fixed {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 44px;
-  z-index: 9;
 }
 </style>
