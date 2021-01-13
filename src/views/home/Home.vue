@@ -9,7 +9,7 @@
             @pullUpload="pullUpload">
       <home-swiper :banners="banners"/>
       <recommend-view :recommends="recommends" />
-      <tab-control class="tab-control" ref="tabControl2" :tabs="tabs" @tabClick="tabClick" />
+      <tab-control ref="tabControl2" :tabs="tabs" @tabClick="tabClick" />
       <goods-list :goods="showGoods"/>
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop"/>
@@ -47,6 +47,7 @@ export default {
       isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
+      saveY: 0,
       tabs: [
         {
           id: 1,
@@ -78,6 +79,13 @@ export default {
       })
     })
   },
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.saveY, 0)
+    this.$refs.scroll.refresh()
+  },
+  deactivated() {
+    this.saveY = this.$refs.scroll.getScrollY()
+  },
   methods: {
     /**
      * 事件监听相关方法
@@ -98,7 +106,7 @@ export default {
       this.$refs.tabControl2.currentIndex = index
     },
     backClick() {
-      this.$refs.scroll.scroll.scrollTo(0, 0, 300)
+      this.$refs.scroll.scrollTo(0, 0, 300)
     },
     scrollPosition(position) {
       //backtop是否显示
@@ -160,8 +168,7 @@ export default {
   z-index: 9;
 }
 .tab-control {
-  position: sticky;
-  top: 44px;
+  position: relative;
   z-index: 9;
 }
 
