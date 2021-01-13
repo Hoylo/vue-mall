@@ -44,10 +44,12 @@ export default {
     }
   },
   mounted() {
-    setTimeout(() => {
-      this.handleDom()
-      this.startTimer()
-    }, 3000)
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.handleDom()
+        this.startTimer()
+      }, 3000)
+    })
   },
   methods: {
     /**
