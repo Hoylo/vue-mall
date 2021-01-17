@@ -1,8 +1,12 @@
 <template>
-<div class="detail">
-  <detail-nav-bar/>
-  <detail-swiper :top-images="topImages"/>
-  <detail-base-info :goods="goods"/>
+<div class="detail" id="detail">
+  <detail-nav-bar class="detail-nav"/>
+  <scroll class="content" :probe-type="3" :pull-up-load="true" ref="scroll">
+    <detail-swiper :top-images="topImages"/>
+    <detail-base-info :goods="goods"/>
+    <detail-shop-info :shop="shop"/>
+    <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
+  </scroll>
 </div>
 
 </template>
@@ -11,8 +15,11 @@
 import DetailNavBar from "@/views/detail/childComps/DetailNavBar"
 import DetailSwiper from "@/views/detail/childComps/DetailSwiper"
 import DetailBaseInfo from "@/views/detail/childComps/DetailBaseInfo"
+import DetailShopInfo from "@/views/detail/childComps/DetailShopInfo"
+import Scroll from "@/components/common/scroll/Scroll"
+import DetailGoodsInfo from "@/views/detail/childComps/DetailGoodsInfo";
 
-import {getDetail, Goods} from "@/network/detail"
+import {getDetail, Goods, Shop} from "@/network/detail"
 
 export default {
   name: "Detail",
@@ -20,15 +27,23 @@ export default {
     return {
       iid: null,
       topImages: [],
-      goods: {}
+      goods: {},
+      shop: {},
+      detailInfo: {}
     }
   },
   methods: {
+    imageLoad () {
+      this.$refs.scroll.refresh()
+    }
   },
   components: {
     DetailNavBar,
     DetailSwiper,
-    DetailBaseInfo
+    DetailBaseInfo,
+    DetailShopInfo,
+    Scroll,
+    DetailGoodsInfo
   },
   created() {
     this.iid = this.$route.params.iid
@@ -36,9 +51,14 @@ export default {
     getDetail(this.iid).then(res => {
       let result = res.result
 
+      //顶部轮播图数据
       this.topImages = result.itemInfo.topImages
-
+      //商品数据
       this.goods = new Goods(result.itemInfo, result.columns, result.shopInfo.services)
+      //商家数据
+      this.shop = new Shop(result.shopInfo)
+      //商品详情
+      this.detailInfo = result.detailInfo
 
       console.log(res);
     }).catch(err => {
@@ -49,5 +69,18 @@ export default {
 </script>
 
 <style scoped>
-
+#detail {
+  position: relative;
+  z-index: 9;
+  background-color: #fff;
+  height: 100vh;
+}
+.detail-nav {
+  position: relative;
+  z-index: 9;
+  background-color: #fff;
+}
+.content {
+  height: calc(100% - 44px);
+}
 </style>
