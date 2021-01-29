@@ -23,9 +23,9 @@ import RecommendView from "@/views/home/childComps/RecommendView"
 import TabControl from "@/components/common/tabControl/TabControl"
 import GoodsList from "@/components/content/goods/GoodsList"
 import Scroll from "@/components/common/scroll/Scroll"
-import BackTop from "@/components/content/BackTop/BackTop";
+import BackTop from "@/components/content/BackTop/BackTop"
 
-import {debounce} from "@/components/common/utils";
+import {debounce} from "@/common/utils"
 
 import {
   getHomeData,

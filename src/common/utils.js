@@ -1,3 +1,25 @@
+/**
+ * 防抖实现
+ * @param func
+ * @param delay
+ * @returns {function(...[*]=): void}
+ */
+export function debounce(func, delay) {
+    let timer = null
+    return function(...args) {
+        if (timer) clearTimeout(timer)
+        timer = setTimeout(() => {
+            func.apply(this, args)
+        }, delay)
+    }
+}
+
+/**
+ * 格式化日期
+ * @param date
+ * @param format
+ * @returns {*}
+ */
 export function formatDate(date, format) {
     var o = {
         "M+": date.getMonth() + 1,
