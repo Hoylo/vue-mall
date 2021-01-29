@@ -1,4 +1,4 @@
-# vue-tabbar
+# vue-mall
 
 ## Project setup
 ```
