@@ -6,6 +6,7 @@
     <detail-base-info :goods="goods"/>
     <detail-shop-info :shop="shop"/>
     <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
+    <detail-params-info :param-info="itemParams"/>
   </scroll>
 </div>
 
@@ -18,6 +19,7 @@ import DetailBaseInfo from "@/views/detail/childComps/DetailBaseInfo"
 import DetailShopInfo from "@/views/detail/childComps/DetailShopInfo"
 import Scroll from "@/components/common/scroll/Scroll"
 import DetailGoodsInfo from "@/views/detail/childComps/DetailGoodsInfo";
+import DetailParamsInfo from "@/views/detail/childComps/DetailParamsInfo";
 
 import {getDetail, Goods, Shop} from "@/network/detail"
 
@@ -29,7 +31,8 @@ export default {
       topImages: [],
       goods: {},
       shop: {},
-      detailInfo: {}
+      detailInfo: {},
+      itemParams: {}
     }
   },
   methods: {
@@ -43,7 +46,8 @@ export default {
     DetailBaseInfo,
     DetailShopInfo,
     Scroll,
-    DetailGoodsInfo
+    DetailGoodsInfo,
+    DetailParamsInfo
   },
   created() {
     this.iid = this.$route.params.iid
@@ -59,6 +63,8 @@ export default {
       this.shop = new Shop(result.shopInfo)
       //商品详情
       this.detailInfo = result.detailInfo
+      //参数信息
+      this.itemParams = result.itemParams
 
       console.log(res);
     }).catch(err => {

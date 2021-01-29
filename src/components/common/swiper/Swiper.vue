@@ -48,7 +48,7 @@ export default {
       setTimeout(() => {
         this.handleDom()
         this.startTimer()
-      }, 3000)
+      }, 500)
     })
   },
   methods: {
