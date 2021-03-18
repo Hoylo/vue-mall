@@ -1,15 +1,17 @@
 <template>
 <div class="detail" id="detail">
-  <detail-nav-bar class="detail-nav"/>
-  <scroll class="content" :probe-type="3" :pull-up-load="true" ref="scroll">
+  <detail-nav-bar class="detail-nav" @clickNav="clickNav" ref="nav" />
+  <scroll class="content" :probe-type="3" :pull-up-load="true" ref="scroll" @scroll="contentScroll">
     <detail-swiper :top-images="topImages"/>
     <detail-base-info :goods="goods"/>
     <detail-shop-info :shop="shop"/>
     <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
-    <detail-params-info :param-info="itemParams"/>
-    <detail-comment-info :comment-infos="commentInfo"/>
-    <goods-list :goods="recommendInfo"/>
+    <detail-params-info ref="params" :param-info="itemParams"/>
+    <detail-comment-info ref="comment" :comment-infos="commentInfo"/>
+    <goods-list ref="recommend" :goods="recommendInfo"/>
   </scroll>
+  <back-top @click.native="backClick" v-show="isShowBackTop"/>
+  <detail-bottom-bar/>
 </div>
 
 </template>
@@ -23,9 +25,11 @@ import Scroll from "@/components/common/scroll/Scroll"
 import DetailGoodsInfo from "@/views/detail/childComps/DetailGoodsInfo"
 import DetailParamsInfo from "@/views/detail/childComps/DetailParamsInfo"
 import DetailCommentInfo from "@/views/detail/childComps/DetailCommentInfo"
-import GoodsList from "@/components/content/goods/GoodsList";
+import GoodsList from "@/components/content/goods/GoodsList"
+import DetailBottomBar from "@/views/detail/childComps/DetailBottomBar";
 
 import {getDetail, Goods, Shop, getRecommend} from "@/network/detail"
+import {BACK_TOP} from '@/common/mixin'
 
 export default {
   name: "Detail",
@@ -38,12 +42,37 @@ export default {
       detailInfo: {},
       itemParams: {},
       commentInfo: {},
-      recommendInfo: []
+      recommendInfo: [],
+      themeTopY: [],
+      currentIndex: 0
     }
   },
   methods: {
     imageLoad () {
       this.$refs.scroll.refresh()
+      this.themeTopY = []
+      this.themeTopY.push(0)
+      this.themeTopY.push(this.$refs.params.$el.offsetTop)
+      this.themeTopY.push(this.$refs.comment.$el.offsetTop)
+      this.themeTopY.push(this.$refs.recommend.$el.offsetTop)
+      this.themeTopY.push(Number.MAX_VALUE);
+    },
+    clickNav(index) {
+      this.$refs.scroll.scrollTo(0, -this.themeTopY[index] + 50, 200)
+      console.log(index)
+    },
+    contentScroll(position) {
+      this.showBackTop(position)
+      const positionY = -position.y
+      let length = this.themeTopY.length
+      for (let i = 0; i < length; i++) {
+        if (this.currentIndex !== i &&
+            ((i < length - 1 && positionY >= this.themeTopY[i] && positionY < this.themeTopY[i+1]) ||
+                (i === length - 1 && positionY >= this.themeTopY[i]))) {
+          this.currentIndex = i
+          this.$refs.nav.currentIndex = this.currentIndex
+        }
+      }
     }
   },
   components: {
@@ -55,8 +84,10 @@ export default {
     DetailGoodsInfo,
     DetailParamsInfo,
     DetailCommentInfo,
-    GoodsList
+    GoodsList,
+    DetailBottomBar
   },
+  mixins: [BACK_TOP],
   created() {
     this.iid = this.$route.params.iid
 
@@ -103,6 +134,6 @@ export default {
   background-color: #fff;
 }
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 49px);
 }
 </style>

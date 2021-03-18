@@ -23,8 +23,7 @@ import RecommendView from "@/views/home/childComps/RecommendView"
 import TabControl from "@/components/common/tabControl/TabControl"
 import GoodsList from "@/components/content/goods/GoodsList"
 import Scroll from "@/components/common/scroll/Scroll"
-import BackTop from "@/components/content/BackTop/BackTop"
-
+import {BACK_TOP} from '@/common/mixin'
 import {debounce} from "@/common/utils"
 
 import {
@@ -44,7 +43,6 @@ export default {
         sell: {page: 0, list: []}
       },
       currentType: 'pop',
-      isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
       saveY: 0,
@@ -64,6 +62,7 @@ export default {
       ]
     }
   },
+  mixins: [BACK_TOP],
   created() {
     this.getHomeData()
     this.getHomeGoods('pop')
@@ -105,12 +104,10 @@ export default {
       this.$refs.tabControl1.currentIndex = index
       this.$refs.tabControl2.currentIndex = index
     },
-    backClick() {
-      this.$refs.scroll.scrollTo(0, 0, 300)
-    },
+
     scrollPosition(position) {
       //backtop是否显示
-      this.isShowBackTop = -position.y > 1000
+      this.showBackTop(position)
       //tab-control吸顶效果
       this.isTabFixed = -position.y > this.$refs.tabControl2.$el.offsetTop
     },
@@ -146,8 +143,7 @@ export default {
     RecommendView,
     TabControl,
     GoodsList,
-    Scroll,
-    BackTop
+    Scroll
   }
 }
 </script>

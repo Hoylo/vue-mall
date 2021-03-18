@@ -28,6 +28,7 @@ export default {
   methods: {
     clickNavItem(index) {
       this.currentIndex = index
+      this.$emit('clickNav', index)
     },
     back() {
       this.$router.back()
