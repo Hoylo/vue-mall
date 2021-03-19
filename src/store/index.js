@@ -3,17 +3,25 @@ import Vuex from 'vuex'
 
 import mutations from '@/store/mutations'
 import actions from '@/store/actions'
+import getters from "@/store/getters";
 
 Vue.use(Vuex)
 
+let cartList = localStorage.getItem('cartList')
+if (cartList) {
+    cartList = JSON.parse(cartList)
+} else {
+    cartList = []
+}
 const state = {
-    cartList: []
+    cartList
 }
 
 const store = new Vuex.Store({
     state,
     mutations,
-    actions
+    actions,
+    getters
 })
 
 export default store
