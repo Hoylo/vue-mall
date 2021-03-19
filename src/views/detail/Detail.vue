@@ -11,7 +11,7 @@
     <goods-list ref="recommend" :goods="recommendInfo"/>
   </scroll>
   <back-top @click.native="backClick" v-show="isShowBackTop"/>
-  <detail-bottom-bar/>
+  <detail-bottom-bar @addToCart="addToCart"/>
 </div>
 
 </template>
@@ -73,6 +73,17 @@ export default {
           this.$refs.nav.currentIndex = this.currentIndex
         }
       }
+    },
+    addToCart() {
+      const product = {
+        image: this.topImages[0],
+        title: this.goods.title,
+        desc: this.goods.desc,
+        price: this.goods.newPrice,
+        realPrice: this.goods.realPrice,
+        iid: this.iid
+      }
+      this.$store.dispatch('addCart', product)
     }
   },
   components: {
